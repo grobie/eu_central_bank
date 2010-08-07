@@ -2,11 +2,16 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 require 'yaml'
 
 describe "EuCentralBank" do
+  before(:all) do
+    @tmp_cache_directory = File.expand_path(File.dirname(__FILE__) + '/tmp')
+    Dir.mkdir(@tmp_cache_directory) unless File.exists?(@tmp_cache_directory)
+  end
+
   before(:each) do
     @bank = EuCentralBank.new
     @cache_path = File.expand_path(File.dirname(__FILE__) + '/exchange_rates.xml')
     @yml_cache_path = File.expand_path(File.dirname(__FILE__) + '/exchange_rates.yml')
-    @tmp_cache_path = File.expand_path(File.dirname(__FILE__) + '/tmp/exchange_rates.xml')
+    @tmp_cache_path = File.expand_path(@tmp_cache_directory + '/exchange_rates.xml')
   end
 
   after(:each) do
