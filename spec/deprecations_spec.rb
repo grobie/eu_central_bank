@@ -13,6 +13,7 @@ describe "EuCentralBank" do
   end
 
   before(:each) do
+    mock(Money).deprecate("EuCentralBank is deprecated and will be removed in v0.2.0. Use Money::Bank::EuCentral instead.")
     @bank = EuCentralBank.new
   end
 
@@ -49,6 +50,7 @@ describe "EuCentralBank" do
   it "should return the correct exchange rates using exchange" do
     @bank.update_rates(@cache_path)
     EuCentralBank::CURRENCIES.each do |currency|
+      mock(Money).deprecate("`exchange` will be removed in money v3.2.0 and eu_central_bank v0.2.0, use #exchange_with instead")
       @bank.exchange(100, "EUR", currency).cents.should == (@exchange_rates["currencies"][currency].to_f * 100).floor
     end
   end
