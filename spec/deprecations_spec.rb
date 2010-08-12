@@ -1,17 +1,19 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require 'spec_helper'
 require 'yaml'
 
 describe "EuCentralBank" do
+
   before(:all) do
     @tmp_cache_directory = File.expand_path(File.dirname(__FILE__) + '/tmp')
     Dir.mkdir(@tmp_cache_directory) unless File.exists?(@tmp_cache_directory)
+    @yml_cache_path = File.expand_path(File.dirname(__FILE__) + '/exchange_rates.yml')
+    @cache_path = File.expand_path(File.dirname(__FILE__) + '/exchange_rates.xml')
+    @tmp_cache_path = File.expand_path(@tmp_cache_directory + '/exchange_rates.xml')
+    @exchange_rates = YAML.load_file(@yml_cache_path)
   end
 
   before(:each) do
     @bank = EuCentralBank.new
-    @cache_path = File.expand_path(File.dirname(__FILE__) + '/exchange_rates.xml')
-    @yml_cache_path = File.expand_path(File.dirname(__FILE__) + '/exchange_rates.yml')
-    @tmp_cache_path = File.expand_path(@tmp_cache_directory + '/exchange_rates.xml')
   end
 
   after(:each) do
@@ -45,18 +47,16 @@ describe "EuCentralBank" do
   end
 
   it "should return the correct exchange rates using exchange" do
-    EXCHANGE_RATES = YAML.load_file(@yml_cache_path)
     @bank.update_rates(@cache_path)
     EuCentralBank::CURRENCIES.each do |currency|
-      @bank.exchange(100, "EUR", currency).cents.should == (EXCHANGE_RATES["currencies"][currency].to_f * 100).floor
+      @bank.exchange(100, "EUR", currency).cents.should == (@exchange_rates["currencies"][currency].to_f * 100).floor
     end
   end
 
   it "should return the correct exchange rates using exchange_with" do
-    EXCHANGE_RATES = YAML.load_file(@yml_cache_path)
     @bank.update_rates(@cache_path)
     EuCentralBank::CURRENCIES.each do |currency|
-      @bank.exchange_with(Money.new(100, "EUR"), currency).cents.should == (EXCHANGE_RATES["currencies"][currency].to_f * 100).floor
+      @bank.exchange_with(Money.new(100, "EUR"), currency).cents.should == (@exchange_rates["currencies"][currency].to_f * 100).floor
     end
   end
 end
